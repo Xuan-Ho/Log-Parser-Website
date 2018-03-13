@@ -18,6 +18,9 @@
             background-size: cover;
             align-content: center;
         }
+         #form_text{
+            text-align:center
+        }
     </style>
 </head>
 
@@ -51,51 +54,27 @@
 
 
 
-</nav><br><br>>
+</nav><br><br><br><br><br>
 
-<!-- Page Registration Form -->
+<!-- Upload Form -->
 <div class="container">
-    <div class="container">
-        <div class="row">
-            <div class="col.">
-                <div id="form_text">
-                     <h1>LOG ANALYZER</h1>
-                    <p>Sign Up For A Free Account!</p>
-                </div>
-                <form class=" " method="post">
-                    <div class="form-group">
-                        <label for="name">Your Name</label><span class="error"> </span>
-                        <input type="text" name="name"
-                        class="form-control" placeholder="Your Name" value="">
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email Address</label><span class="error"> </span>
-                        <input type="email" name="email"
-                        class="form-control" placeholder="Your Email" value="">
-                    </div>
-                    <!-- Password & Password COnfirmation -->
-                    <div class="form-group">
-                        <label for="password">Password</label><span class="error"></span>
-                        <input type="password" name="password"
-                        class="form-control" placeholder="Password">
-
-                        <label for="confirm_password">Confirm Password</label><span class="error"></span>
-                        <input type="password"
-                        name="confirm_password" class="form-control" placeholder="Confirm Password">
-                        <br>
-
-                         <h2 class="bold marginTop">Sign Up And Scans Log For Free!</h2>
-                        <div id="form_text">
-                            <input type="submit" name="submit" value="SIGN UP" class="btn btn-success btn-lg">
-                        </div>
-                        <br>
-                        <br>
-                    </div>
-                </form>
+    <div class="row">
+        <div class="col.">
+            <div id="form_text">
+                <h1><kbd>LOG PARSER</kbd></h1>
+                <p class="text-warning">Please Upload A Log File</p>
             </div>
+            <form method="POST" enctype="multipart/form-data" >
+                <!-- File Input -->
+                <input type="file" name="uploadfile"  class="input-large form-control bg-dark text-info"><br>
+                
+                <!-- Upload Submit Button -->
+                <input type="submit" name="upload_button" class="form-control btn btn-success btnAdmin" value="UPLOAD">
+            </form>
         </div>
     </div>
 </div>
+
 
 
 

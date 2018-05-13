@@ -8,7 +8,7 @@ class MySQLDatabase
 {
     
     //Database Connection Config
-    public $hostserver = '127.0.0.1';
+    public $hostserver = 'localhost';
     public $username = 'root';
     public $password = '';
     public $database_name = 'user_db';

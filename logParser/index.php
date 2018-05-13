@@ -1,6 +1,7 @@
 <?php 
-    //destroy any previous session & start a fresh session
+    session_start();
     session_destroy();
+    //destroy any previous session & start a fresh session
     session_start();
     require_once('mysql_connection.php');
     
@@ -85,7 +86,7 @@
         }
         else if($tuple1)
         {
-            $_SESSION['user_email'] = $tuple1['user_email'];
+            $_SESSION['u_email'] = $tuple1['user_email'];
             page_redirect("uploadpage.php");
             
         }
@@ -133,6 +134,9 @@
         {
             $error .= "*Email Address Is Invalid Or Empty!<br>";
         }
+        
+
+        
         /*
         *Password Confirmation and Validation
         *If form's password and confirm password are matched and not have empty fields
@@ -148,39 +152,39 @@
             //password input constraints validation
             if (strlen($_POST["password"]) < '6')
             {
-                $error .= "Password Must Have At Least 6 Characters!<br>";
+                $error .= "*Password Must Have At Least 6 Characters!<br>";
             }
             elseif(!preg_match("#[a-z]+#",$password))
             {
-                $error .= "Your Password Must Contain At Least 1 Lowercase Letter!<br>";
+                $error .= "*Your Password Must Contain At Least 1 Lowercase Letter!<br>";
             }
             elseif(!preg_match("#[A-Z]+#",$password))
             {
-                $error .= "Password Must Contain At Least 1 Capital Letter!<br>";
+                $error .= "*Password Must Contain At Least 1 Capital Letter!<br>";
             }
             elseif(!preg_match("#[0-9]+#",$password))
             {
-                $error .= "Password Must Have At Least 1 Number!<br>";
+                $error .= "*Password Must Have At Least 1 Number!<br>";
             }
 
             //password and confirm password matching error catcher
             if($_POST["password"] !== $_POST["confirm_password"])
             {
-                $error .= "Password did not match<br>";
+                $error .= "*Password did not match<br>";
             }
 
             //hashing and salting Form's password
             $password = hash('ripemd128', "$salt2$password$salt1");
-
-
+            
             //check if email already registered
             if($error == "")
             {
-                $check_duplicate = $database->query("select * from `user_info` where 'user_email' = '".$database->mysql_prep($email)."'");
+                $check_duplicate = $database->query("select * from `user_info` where user_email = '".$database->mysql_prep($email)."' ");
                 $username_result = $database->num_rows($check_duplicate);
+
                 $query_insert = "";
                 $statement = null;
-                
+
                 if (!$username_result)
                 {
                     $query_insert = 'insert into user_info(user_name, user_email, user_password) values(?, ?, ?)';
@@ -192,13 +196,15 @@
                 }
                 else
                 {
-                    $error = "Email Already Exist In Database! <br>Please Try Another Email";
-                    
+                    $error = "*Email Already Exist In Database! <br>*Please Try Another Email";
+
                 }
             }
+
         }
+        
     }
-        $database->close_connection(); //close connection
+    $database->close_connection(); //close connection
 ?>
 
 <!doctype html>
@@ -257,6 +263,7 @@
 				box-shadow: 0.5em 0.5em #888888;
 				opacity: 3em;
 			}
+        
      
     </style>
 </head>
@@ -320,7 +327,7 @@
                     </div>
                     <!-- Email Field -->
                     <div class="form-group">
-                        <label for="email">Email Address</label><span class="error"> </span>
+                        <label>Email Address</label><span class="error"> </span>
                         <input type="email" name="email" class="form-control" placeholder="Your Email" value="<?php if(isset($_POST['email'])){echo $_POST['email'];}else{echo " ";}?>">
                     </div>
                     <!-- Password & Password Cnnfirmation  -->
@@ -332,14 +339,17 @@
                         <input type="password" name="confirm_password" class="form-control" placeholder="Confirm Password">
                         <br>
 
-                        <!-- Form Field' Error Notifications -->
-                        <?php
-                            if($error){echo '<div class="alert alert-danger">'.addslashes($error).'</div>';}
+                        <!-- Form Field Error Notifications -->
+                       
+                            <?php
+                            if($error){echo '<div class="alert alert-primary">'.addslashes($error).'</div>';}
                             
                             if($success){echo '<div class="alert alert-success">'.addslashes($success).'</div>';}
                             
                             if($message) {echo '<div class="alert alert-success">'.addslashes($message).'</div>';}
-                        ?>
+                            ?>
+                        
+                        
 
                             <h2 class="bold " id="form_text">Sign Up And Parse Log For Free!</h2>
                             <div id="form_text">

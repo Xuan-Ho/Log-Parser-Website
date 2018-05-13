@@ -1,3 +1,7 @@
+#Do this first if not on windows server/machine
+import matplotlib
+matplotlib.use('Agg')
+
 from LogParser import logReader
 import datetime
 import matplotlib.pyplot as plt
@@ -45,7 +49,7 @@ def by_date(start_date, end_date, chart_title, chart_filename, chart_type, find_
         end_datetime = datetime.datetime(year=int(end_date[6:10]), month=int(end_date[:2]),
                                      day=int(end_date[3:5]), hour=int(end_date[11:13]),
                                      minute=int(end_date[14:16]), second=int(end_date[17:19]))
-        print("Error:                  |" + "Amount Found")
+        print("Usages:                  |" + "Amount Found")
         print("------------------------------------------")
         for e in error_log:
             error_count = 0

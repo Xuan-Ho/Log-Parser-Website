@@ -1,8 +1,54 @@
 <?php
-    //start session up here as a convention 
     session_start();
-?>
+    /*
+    ****REMEMBER TO EDIT YOUR PHP.INI TO SET THE MAX POST AND UPLOAD FILE SIZE!!!****
+    *1) post_max_size=50M
+    *2) upload_max_filesize=50M
+    */
 
+    //Directing to another page
+    function page_redirect($location = NULL)
+    {
+        if($location != NULL)
+        {
+            header("Location: {$location}");
+            exit();
+        }
+    }
+
+
+    function execPy($pyName)
+    {
+        
+        //echo $_SERVER['DOCUMENT_ROOT']; // C:\xampp\htdocs\Log Parser Website\app.py
+        $path = getcwd(); // C:/xampp/htdocs
+        $py_path = getcwd()."\app.py";
+        
+    }
+
+    function no_space($path)
+    {
+        $spaceless_path= str_replace(' ', '%20', $path);
+        return $spaceless_path;
+    }
+    
+    /*If Log Out is pressed, end session.
+    if(isset($_GET['Sign Out']))
+    {
+        session_destroy();
+        echo "<script> alert('You Have Been Successfully Logged Out!'); </script>";
+        page_redirect("index.php");
+    }
+    */
+
+    //redirect to homepage if session variable is not set
+    if(empty($_SESSION['u_email']))
+    {
+        session_destroy();
+        header("location:index.php");
+    }
+
+?>
 <!doctype html>
 <html lang="en">
 
@@ -15,7 +61,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <title>Upload Page</title>
-
+    
     <style>
         body{
             background-color:whitesmoke;
@@ -60,18 +106,12 @@
                 transform: scale(1.02);
                 box-shadow: 0.3em 0.3em #888888;
         }
-        
     </style>
 </head>
 
 <body>
 
-<script>
-    function logoutAlert()
-    {
-        alert("You Have Successfully Log Out!");
-    }
-</script>
+
     
     
 <!-- Navigation bar -->
@@ -111,22 +151,23 @@
                 <h1><kbd>LOG PARSER</kbd></h1>
                 <p class="text-warning">Please Upload A Log File</p>
             </div>
-            <form  method="POST" enctype="multipart/form-data">
+            <form id="upload_form" method="POST" enctype="multipart/form-data">
                 <!-- File Input -->
-                <input type="file" name="selected_file"  class="input-large form-control bg-dark text-info img_hover">
+                <input type="file" name="selected_file" id="file1" class="input-large form-control bg-dark text-info img_hover" onchange="uploadFile()" >
                 
                 <h6 class='alert-danger' id="invalid_file"></h6><br>
     
                 <!-- Upload Submit Button -->
-                <input type="submit" name="upload_button" class="form-control btn btn-success btnAdmin img_hover" value="UPLOAD" >
+                <input type="submit" name="upload_button" class="form-control btn btn-success btnAdmin img_hover" value="UPLOAD">
+                
             </form>
         </div>
     </div>
 </div>
     
 <br><br><br>
-
-
+    
+    
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -136,57 +177,15 @@
 
 </html>
 
-
 <?php
-    /*
-    ****REMEMBER TO EDIT YOUR PHP.INI TO SET THE MAX POST AND UPLOAD FILE SIZE!!!****
-    *1) post_max_size=50M
-    *2) upload_max_filesize=50M
-    */
-    
+
     //Welcome user email session message
-    $welcome = $_SESSION['user_email']; 
+    $welcome = $_SESSION['u_email']; 
     echo "<script>$('#welcome_user').html('<strong>$welcome</strong>'); </script>";
     
-
-    //Directing to another page
-    function page_redirect($location = NULL)
-    {
-        if($location != NULL)
-        {
-            header("Location: {$location}");
-            exit();
-        }
-    }
-
-    //If Log Out is pressed, end session.
-    if(isset($_GET['Log Out']))
-    {
-        session_destroy();
-        echo "<script> alert('You Have Been Successfully Logged Out!'); </script>";
-        page_redirect("index.php");
-    }
-
-    function execPy($pyName)
-    {
-        
-        //echo $_SERVER['DOCUMENT_ROOT']; // C:\xampp\htdocs\Log Parser Website\app.py
-        $path = getcwd(); // C:/xampp/htdocs
-        $py_path = getcwd()."\app.py";
-        
-    }
-
-    function no_space($path)
-    {
-        $spaceless_path= str_replace(' ', '%20', $path);
-        return $spaceless_path;
-    }
-
     //Validate if the the upload file is a ".txt" file
     function extensionValidation()
     {
-        
-        
         // Check file size
         if (isset($_FILES['selected_file']) && $_FILES['selected_file']['size'] > 50000000) 
         {
@@ -199,6 +198,7 @@
         
         else if(isset($_FILES['selected_file'])) //if sumbit button is pressed
         {
+            
             $file = $_FILES['selected_file']; //set selected uploaded file to a variable
             
             $file_error = $file['error']; //variable for upload error
@@ -229,22 +229,22 @@
             //Set upload files location and directory
             $target_dir = "";
             $target_file = $target_dir.basename($file_name);
-            if(move_uploaded_file($file_tmp_location, $target_file))
-            {
-                echo "File Upload Successful!!!<br><br>";
-            }
-            else
-            {
-                $message = 'Failed To Upload File!!!';
-                echo "<script>
-                    ('#invalid_file').html('$message');
-                 </script>";
-            }
+           
             
 
             //If file extension and the allow extesion are the same and no upload error
             if(in_array($realFileExtension, $allowExtension) && $file_error == 0)
             {
+                if(move_uploaded_file($file_tmp_location, $target_file))
+                    
+                    {
+                        echo "File Upload Successful!!!<br><br>";
+                    }
+                        else
+                    {
+                    $message = 'Failed To Upload File!!!';
+                    echo "<script>('#invalid_file').html('$message');</script>";
+                    }
                 
                 /*Testing
                 echo '<h5 class="container">Successfully Uploaded The File'.$file_name.'!</h5>'."<br>";
@@ -255,15 +255,15 @@
                 
                 */
                 
-                $env_var = "C:\Users\xuan\AppData\Local\Programs\Python\Python36\python";
+                //$env_var = "C:\Users\xuan\AppData\Local\Programs\Python\Python36\python";
                 //Execute Python analysis script on the uploaded file
-                $upload_file_path = getcwd();
+                //$upload_file_path = getcwd();
                 
                 //echo $_SERVER['DOCUMENT_ROOT'].'/logParser/*.png<br>';
                 //$server_root = $_SERVER['DOCUMENT_ROOT'].'/logParser/*.png<br>';
              
                 //PHP Shell Command: output python errors analysis results and display chart
-                $py_out_errors = shell_exec("python ParseTester.py");
+                $py_out_errors = shell_exec("python ParseTester.py 2>&1 ");
                 echo "<div class='container' id='chart'>
                         <strong><pre>'.$py_out_errors.'</pre></strong>
                         <img src='errors_chart.png' class='img-thumbnail img_dropshadow'>
@@ -272,16 +272,31 @@
                 
             
                 //PHP Shell Command: output usages python analysis results and display chart
-                $py_out_usages = shell_exec("python ParseTester2.py");
+                $py_out_usages = shell_exec("python ParseTester2.py 2>&1");
                 echo "<div class='container' id='chart'>
                         <strong><pre>'.$py_out_usages.'</pre></strong>
                         <img src='usages_chart.png' class='img-thumbnail img_dropshadow'>
                       </div>
                       ";
+                
+                //Archive Charts and File
+                $archive_name = $file_name.'_charts.zip';
+                $zip = new ZipArchive;
+                if ($zip->open($archive_name, ZipArchive::CREATE) === TRUE) {
+                    $zip->addFile('errors_chart.png' );
+                    $zip->addFile('usages_chart.png');
+                    $zip->addFile($file_name);
+                    $zip->close();
+                    
+                } else {
+                    echo "<script> alert('ARCHIVE CREATION FAILED!'); </script>";
+                }              
 
+                //Archive Download Option
+                echo "<br><br>"."<a class='container form-control bg-dark img_hover' href='$archive_name'  style='text-align: center; color: white;' download>DOWNLOAD(Charts + Log)</a>"."<br>";
+            
                 
-                
-                //Delete Uploaded File After Exection
+                //Delete Uploaded File After Execution
                 if (!unlink($file_name))
                 {
                     echo ("Error deleting $file_name");
@@ -305,18 +320,6 @@
                 echo "<script>
                         $('#invalid_file').html('$message');
                      </script>";
-                
-                
-                //Delete Uploaded File After Exection
-                if (!unlink($file_name))
-                {
-                    echo ("<br>Error deleting $file_name");
-                }
-                else
-                {
-                    echo ("<br>Deleted $file_name");
-                }   
-                
             }
 
         }
@@ -329,3 +332,5 @@
     //Activate Text File Validation
     extensionValidation();
 ?>
+
+

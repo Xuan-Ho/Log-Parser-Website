@@ -1,3 +1,7 @@
+#Do this first if non-windows server/machine
+import matplotlib
+matplotlib.use('Agg')
+
 from LogParser import logReader
 import datetime
 import matplotlib.pyplot as plt

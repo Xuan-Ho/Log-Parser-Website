@@ -1,5 +1,4 @@
-# WebApp-LogParser
-# www.log-parser.com
+# WebApp-LogParser  www.log-parser.com
 Website That Parse Uploaded Log File
 
 
